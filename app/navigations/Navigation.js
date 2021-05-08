@@ -74,6 +74,11 @@ function screenOptions(route, color) {
       break;
   }
   return (
-    <Icon type="material-community" name={iconName} size="22" color={color} />
+    <Icon
+      type="material-community"
+      name={iconName}
+      fontSize="22"
+      color={color}
+    />
   );
 }
