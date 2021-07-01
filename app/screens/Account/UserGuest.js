@@ -8,7 +8,7 @@ export default function UserGuest() {
   return (
     <ScrollView centerContent={true} style={styles.viewBody}>
       <Image
-        source={require("../../../assets/img/logo-user-guest.png")}
+        source={require("../../../assets/img/logo-user-guest-font.png")}
         resizeMode="contain"
         style={styles.image}
       />
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#DED7FA",
   },
   image: {
-    height: 250,
+    height: 400,
     width: "100%",
-    marginBottom: 50,
+    marginBottom: 0,
   },
   title: {
     fontWeight: "bold",
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginLeft: 30,
     marginRight: 30,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   viewBtn: {
     flex: 1,
