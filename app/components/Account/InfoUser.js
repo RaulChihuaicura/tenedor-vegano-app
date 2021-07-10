@@ -13,8 +13,11 @@ export default function InfoUser(props) {
   } = props;
 
   const changeAvatar = async () => {
-    const resultPermission = await Permissions.askAsync(Permissions.CAMERA);
-    const resultPermissionCamera = resultPermission.permissions.camera.status;
+    const resultPermission = await Permissions.askAsync(
+      Permissions.CAMERA_ROLL
+    );
+    const resultPermissionCamera =
+      resultPermission.permissions.cameraRoll.status;
 
     if (resultPermissionCamera === "denied") {
       toastRef.current.show(
