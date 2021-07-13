@@ -21,6 +21,7 @@ export default function AddRestaurantForm(props) {
         setRestaurantAddress={setRestaurantAddress}
         setRestaurantDescription={setRestaurantDescription}
       />
+      <UploadImage />
       <Button
         title="Crear Local Vegano"
         onPress={addRestaurant}
@@ -56,6 +57,23 @@ function FormAdd(props) {
   );
 }
 
+function UploadImage() {
+  const imageSelect = () => {
+    console.log("Imagenes...");
+  };
+  return (
+    <View style={styles.viewImages}>
+      <Icon
+        type="material-community"
+        name="camera"
+        color="#7a7a7a"
+        containerStyle={styles.containerIcon}
+        onPress={imageSelect}
+      />
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: "#DED7FA",
@@ -77,5 +95,19 @@ const styles = StyleSheet.create({
   btnAddRestaurant: {
     backgroundColor: "#C2A0E8",
     margin: 20,
+  },
+  viewImages: {
+    flexDirection: "row",
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 30,
+  },
+  containerIcon: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    height: 70,
+    width: 70,
+    backgroundColor: "#e3e3e3",
   },
 });
