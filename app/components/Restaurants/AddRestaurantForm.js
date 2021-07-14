@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, View, ScrollView, Alert, Dimensions } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
-import { map, size } from "lodash";
+import { map, size, filter } from "lodash";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
@@ -98,6 +98,30 @@ function UploadImage(props) {
     }
   };
 
+  const removeImage = (image) => {
+    Alert.alert(
+      "Eliminar Imagen",
+      "¿Estas seguro de eliminar la imagen?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          onPress: () => {
+            setImagesSelected(
+              filter(imagesSelected, (imageUrl) => imageUrl !== image)
+            );
+          },
+        },
+      ],
+      {
+        cancelable: false,
+      }
+    );
+  };
+
   return (
     <View style={styles.viewImages}>
       {size(imagesSelected) < 4 && (
@@ -114,6 +138,7 @@ function UploadImage(props) {
           key={index}
           style={styles.miniatureStyle}
           source={{ uri: imageRestaurant }}
+          onPress={() => removeImage(imageRestaurant)}
         />
       ))}
     </View>
