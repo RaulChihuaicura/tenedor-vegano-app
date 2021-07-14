@@ -16,7 +16,7 @@ export default function RestaurantsStack() {
       <Stack.Screen
         name="add-restaurant"
         component={AddRestaurant}
-        options={{ title: "Añadir nuevo restaurante" }}
+        options={{ title: "Añadir nuevo Local Vegano" }}
       />
     </Stack.Navigator>
   );
