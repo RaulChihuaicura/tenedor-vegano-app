@@ -20,6 +20,12 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "cl.raulchihuaicura.tenedorvegano",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCOlFA8yb7HC699NkARJCx6BtHfjXLiBw8"
+        }
+      },
       "permissions": [
         "CAMERA_ROLL", 
         "READ_EXTERNAL_STORAGE", 
