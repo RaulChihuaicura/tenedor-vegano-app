@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Alert,
-  Dimensions,
-  Text,
-} from "react-native";
+import { StyleSheet, View, ScrollView, Alert, Dimensions } from "react-native";
 import { Icon, Avatar, Image, Input, Button } from "react-native-elements";
 import { map, size, filter } from "lodash";
 import * as Permissions from "expo-permissions";
@@ -14,6 +7,11 @@ import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import Modal from "../Modal";
 import MapView from "react-native-maps";
+import uuid from "random-uuid-v4";
+
+import { firebaseApp } from "../../utils/firebase";
+import firebase from "firebase/app";
+import "firebase/storage";
 
 const WidthScreen = Dimensions.get("window").width; //Obtenemos el ancho de la pantalla
 
@@ -36,9 +34,38 @@ export default function AddRestaurantForm(props) {
     } else if (!locationRestaurant) {
       toastRef.current.show("Tienes que localizar el local en el mapa");
     } else {
-      console.log("OK");
+      setIsLoading(true);
+      uploadImageStorage().then((response) => {
+        console.log(response);
+        setIsLoading(false);
+      });
     }
   };
+
+  const uploadImageStorage = async () => {
+    //console.log(imagesSelected);
+    const imageBlob = [];
+
+    await Promise.all(
+      map(imagesSelected, async (image) => {
+        const response = await fetch(image);
+        const blob = await response.blob();
+        const ref = firebase.storage().ref("restaurants").child(uuid());
+        await ref.put(blob).then(async (result) => {
+          await firebase
+            .storage()
+            .ref(`restaurants/${result.metadata.name}`)
+            .getDownloadURL()
+            .then((photoUrl) => {
+              imageBlob.push(photoUrl);
+            });
+        });
+      })
+    );
+
+    return imageBlob;
+  };
+
   return (
     <ScrollView style={styles.scrollView}>
       <ImageRestaurant imageRestaurant={imagesSelected[0]} />
