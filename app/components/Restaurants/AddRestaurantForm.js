@@ -12,6 +12,8 @@ import uuid from "random-uuid-v4";
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
 import "firebase/storage";
+import "firebase/firestore";
+const db = firebase.firestore(firebaseApp);
 
 const WidthScreen = Dimensions.get("window").width; //Obtenemos el ancho de la pantalla
 
@@ -36,8 +38,29 @@ export default function AddRestaurantForm(props) {
     } else {
       setIsLoading(true);
       uploadImageStorage().then((response) => {
-        console.log(response);
-        setIsLoading(false);
+        db.collection("restaurants")
+          .add({
+            name: restaurantName,
+            address: restaurantAddress,
+            description: restaurantDescription,
+            location: locationRestaurant,
+            images: response,
+            rating: 0,
+            ratingTotal: 0,
+            quantityVoting: 0,
+            createAt: new Date(),
+            createBy: firebase.auth().currentUser.uid,
+          })
+          .then(() => {
+            setIsLoading(false);
+            navigation.navigate("restaurants");
+          })
+          .catch(() => {
+            setIsLoading(false);
+            toastRef.current.show(
+              "Error al subir el local, intentelo más tarde"
+            );
+          });
       });
     }
   };
