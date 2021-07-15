@@ -27,12 +27,17 @@ export default function AddRestaurantForm(props) {
   const [locationRestaurant, setLocationRestaurant] = useState(null);
 
   const addRestaurant = () => {
-    console.log("OK");
-    /* console.log("restaurantName: " + restaurantName);
-    console.log("restaurantAddress: " + restaurantAddress);
-    console.log("restaurantDescription: " + restaurantDescription); */
-    //console.log(imagesSelected);
-    console.log(locationRestaurant);
+    if (!restaurantName || !restaurantAddress || !restaurantDescription) {
+      toastRef.current.show("Todos los campos del formulario son obligatorios");
+    } else if (size(imagesSelected) === 0) {
+      toastRef.current.show(
+        "El local vegano tiene que tener almenos una imagen"
+      );
+    } else if (!locationRestaurant) {
+      toastRef.current.show("Tienes que localizar el local en el mapa");
+    } else {
+      console.log("OK");
+    }
   };
   return (
     <ScrollView style={styles.scrollView}>
