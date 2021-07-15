@@ -24,14 +24,15 @@ export default function AddRestaurantForm(props) {
   const [restaurantDescription, setRestaurantDescription] = useState("");
   const [imagesSelected, setImagesSelected] = useState([]);
   const [isVisibleMap, setIsVisibleMap] = useState(false);
-
-  console.log(imagesSelected);
+  const [locationRestaurant, setLocationRestaurant] = useState(null);
 
   const addRestaurant = () => {
     console.log("OK");
-    console.log("restaurantName: " + restaurantName);
+    /* console.log("restaurantName: " + restaurantName);
     console.log("restaurantAddress: " + restaurantAddress);
-    console.log("restaurantDescription: " + restaurantDescription);
+    console.log("restaurantDescription: " + restaurantDescription); */
+    //console.log(imagesSelected);
+    console.log(locationRestaurant);
   };
   return (
     <ScrollView style={styles.scrollView}>
@@ -52,7 +53,12 @@ export default function AddRestaurantForm(props) {
         onPress={addRestaurant}
         buttonStyle={styles.btnAddRestaurant}
       />
-      <Map isVisibleMap={isVisibleMap} setIsVisibleMap={setIsVisibleMap} />
+      <Map
+        isVisibleMap={isVisibleMap}
+        setIsVisibleMap={setIsVisibleMap}
+        setLocationRestaurant={setLocationRestaurant}
+        toastRef={toastRef}
+      />
     </ScrollView>
   );
 }
@@ -111,7 +117,8 @@ function FormAdd(props) {
 }
 
 function Map(props) {
-  const { isVisibleMap, setIsVisibleMap } = props;
+  const { isVisibleMap, setIsVisibleMap, setLocationRestaurant, toastRef } =
+    props;
   const [location, setLocation] = useState(null);
 
   useEffect(() => {
@@ -138,6 +145,12 @@ function Map(props) {
     })();
   }, []);
 
+  const confirmLocation = () => {
+    setLocationRestaurant(location);
+    toastRef.current.show("Localización guardada correctamente");
+    setIsVisibleMap(false);
+  };
+
   return (
     <Modal isVisible={isVisibleMap} setIsVisible={setIsVisibleMap}>
       <View>
@@ -157,6 +170,20 @@ function Map(props) {
             />
           </MapView>
         )}
+        <View style={styles.viewMapBtn}>
+          <Button
+            title="Guardar Ubicación"
+            containerStyle={styles.viewMapBtnContainerSave}
+            buttonStyle={styles.viewMapBtnSave}
+            onPress={confirmLocation}
+          />
+          <Button
+            title="Cancelar Ubicación"
+            containerStyle={styles.viewMapBtnContainerCancel}
+            buttonStyle={styles.viewMapBtnCancel}
+            onPress={() => setIsVisibleMap(false)}
+          />
+        </View>
       </View>
     </Modal>
   );
@@ -289,5 +316,22 @@ const styles = StyleSheet.create({
   mapStyle: {
     width: "100%",
     height: 550,
+  },
+  viewMapBtn: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  viewMapBtnContainerCancel: {
+    paddingLeft: 5,
+  },
+  viewMapBtnCancel: {
+    backgroundColor: "#a60d0d",
+  },
+  viewMapBtnContainerSave: {
+    paddingRight: 5,
+  },
+  viewMapBtnSave: {
+    backgroundColor: "#C2A0E8",
   },
 });
