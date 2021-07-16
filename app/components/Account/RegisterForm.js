@@ -1,4 +1,3 @@
-import { useScrollToTop } from "@react-navigation/native";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Input, Icon, Button } from "react-native-elements";
@@ -40,7 +39,7 @@ export default function RegisterForm(props) {
       firebase
         .auth()
         .createUserWithEmailAndPassword(formData.email, formData.password)
-        .then((response) => {
+        .then(() => {
           setLoading(false);
           navigation.navigate("account");
         })
