@@ -38,16 +38,39 @@ export default function AddReviewRestaurant(props) {
         rating: rating,
         createAt: new Date(),
       };
+
       db.collection("reviews")
         .add(paylod)
         .then(() => {
-          setIsLoading(false);
+          updateRestaurant();
         })
         .catch(() => {
           toastRef.current.show("Error al enviar el comentario");
           setIsLoading(false);
         });
     }
+  };
+
+  const updateRestaurant = () => {
+    const restaurantRef = db.collection("restaurants").doc(idRestaurant);
+
+    restaurantRef.get().then((response) => {
+      const restaurantData = response.data();
+      const ratingTotal = restaurantData.ratingTotal + rating;
+      const quantityVoting = restaurantData.quantityVoting + 1;
+      const ratingResult = ratingTotal / quantityVoting;
+
+      restaurantRef
+        .update({
+          rating: ratingResult,
+          ratingTotal,
+          quantityVoting,
+        })
+        .then(() => {
+          setIsLoading(false);
+          navigation.goBack();
+        });
+    });
   };
 
   return (
