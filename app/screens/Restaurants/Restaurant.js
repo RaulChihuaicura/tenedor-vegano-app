@@ -5,6 +5,7 @@ import { Rating, ListItem, Icon } from "react-native-elements";
 import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
 import Map from "../../components/Map";
+import ListReview from "../../components/Restaurants/ListReview";
 
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
@@ -51,6 +52,11 @@ export default function Restaurant(props) {
         location={restaurant.location}
         name={restaurant.name}
         address={restaurant.address}
+      />
+      <ListReview
+        navigation={navigation}
+        idRestaurant={restaurant.id}
+        setRating={setRating}
       />
     </ScrollView>
   );
