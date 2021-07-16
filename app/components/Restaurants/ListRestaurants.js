@@ -96,14 +96,18 @@ const styles = StyleSheet.create({
   },
   viewRestaurant: {
     flexDirection: "row",
-    margin: 10,
+    margin: 2,
+    padding: 4,
+    borderRadius: 5,
+    backgroundColor: "#C2A0E8",
   },
   viewRestaurantImage: {
     marginRight: 15,
   },
   imageRestaurant: {
-    width: 80,
+    width: 110,
     height: 80,
+    borderRadius: 10,
   },
   restaurantName: {
     fontWeight: "bold",

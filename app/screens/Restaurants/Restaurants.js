@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { Icon } from "react-native-elements";
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
@@ -26,30 +27,32 @@ export default function Restaurants(props) {
   }, []);
 
   //Obtiene todos los locales
-  useEffect(() => {
-    db.collection("restaurants")
-      .get()
-      .then((snap) => {
-        setTotalRestaurants(snap.size);
-      });
-
-    const resultRestaurants = [];
-
-    db.collection("restaurants")
-      .orderBy("createAt", "desc")
-      .limit(limitRestaurants)
-      .get()
-      .then((response) => {
-        setStartRestaurants(response.docs[response.docs.length - 1]);
-
-        response.forEach((doc) => {
-          const restaurant = doc.data();
-          restaurant.id = doc.id;
-          resultRestaurants.push(restaurant);
+  useFocusEffect(
+    useCallback(() => {
+      db.collection("restaurants")
+        .get()
+        .then((snap) => {
+          setTotalRestaurants(snap.size);
         });
-        setRestaurants(resultRestaurants);
-      });
-  }, []);
+
+      const resultRestaurants = [];
+
+      db.collection("restaurants")
+        .orderBy("createAt", "desc")
+        .limit(limitRestaurants)
+        .get()
+        .then((response) => {
+          setStartRestaurants(response.docs[response.docs.length - 1]);
+
+          response.forEach((doc) => {
+            const restaurant = doc.data();
+            restaurant.id = doc.id;
+            resultRestaurants.push(restaurant);
+          });
+          setRestaurants(resultRestaurants);
+        });
+    }, [])
+  );
 
   //Se ocupa de traer nuevos locales y guardarlos en el estado
   const handleLoadMore = () => {
