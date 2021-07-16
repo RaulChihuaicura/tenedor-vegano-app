@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, ScrollView, Dimensions } from "react-native";
-import { Rating } from "react-native-elements";
+import { map } from "lodash";
+import { Rating, ListItem, Icon } from "react-native-elements";
 import Loading from "../../components/Loading";
 import Carousel from "../../components/Carousel";
 import Map from "../../components/Map";
@@ -77,12 +78,33 @@ function TitleRestaurant(props) {
 function RestaurantInfo(props) {
   const { location, name, address } = props;
 
+  const listInfo = [
+    {
+      text: address,
+      iconName: "map-marker",
+      icontyoe: "material-community",
+      action: null,
+    },
+  ];
+
   return (
     <View style={styles.viewRestaurantInfo}>
       <Text style={styles.viewRestaurantInfoTitle}>
         Información del Local Vegano
       </Text>
       <Map location={location} name={name} height={100} />
+      {map(listInfo, (item, index) => (
+        <ListItem
+          key={index}
+          title={item.text}
+          leftIcon={{
+            name: item.iconName,
+            type: item.icontyoe,
+            color: "#C2A0E8",
+          }}
+          containerStyle={styles.containerListItem}
+        />
+      ))}
     </View>
   );
 }
@@ -97,6 +119,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   nameRestaurant: {
+    color: "#333333",
     fontSize: 20,
     fontWeight: "bold",
   },
@@ -116,5 +139,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+    color: "#333333",
+  },
+  containerListItem: {
+    backgroundColor: "#DED7FA",
+    borderBottomColor: "#C2A0E8",
+    borderBottomWidth: 1,
   },
 });
