@@ -15,7 +15,7 @@ export default function Restaurants(props) {
   const [totalRestaurants, setTotalRestaurants] = useState(0);
   const [startRestaurants, setStartRestaurants] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const limitRestaurants = 10;
+  const limitRestaurants = 8;
 
   //Verifica si se esta logeado en la app
   useEffect(() => {
@@ -51,10 +51,10 @@ export default function Restaurants(props) {
       });
   }, []);
 
-  //Se ocupa de traer nuevos restaurantes y guardarlos en el estado
+  //Se ocupa de traer nuevos locales y guardarlos en el estado
   const handleLoadMore = () => {
     const resultRestaurants = [];
-    restaurant.length < totalRestaurants && setIsLoading(true);
+    restaurants.length < totalRestaurants && setIsLoading(true);
 
     db.collection("restaurants")
       .orderBy("createAt", "desc")
@@ -71,16 +71,20 @@ export default function Restaurants(props) {
         response.forEach((doc) => {
           const restaurant = doc.data();
           restaurant.id = doc.id;
-          resultRestaurants.push({ restaurant });
+          resultRestaurants.push(restaurant);
         });
 
-        setRestaurants([...restaurant, ...resultRestaurants]);
+        setRestaurants([...restaurants, ...resultRestaurants]);
       });
   };
 
   return (
     <View style={styles.viewBody}>
-      <ListRestaurants restaurants={restaurants} />
+      <ListRestaurants
+        restaurants={restaurants}
+        handleLoadMore={handleLoadMore}
+        isLoading={isLoading}
+      />
       {user && (
         <Icon
           reverse
