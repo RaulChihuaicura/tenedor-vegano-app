@@ -14,8 +14,10 @@ export default function Restaurants(props) {
   const [restaurants, setRestaurants] = useState([]);
   const [totalRestaurants, setTotalRestaurants] = useState(0);
   const [startRestaurants, setStartRestaurants] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const limitRestaurants = 10;
 
+  //Verifica si se esta logeado en la app
   useEffect(() => {
     firebase.auth().onAuthStateChanged((userInfo) => {
       console.log(userInfo);
@@ -23,11 +25,12 @@ export default function Restaurants(props) {
     });
   }, []);
 
+  //Obtiene todos los locales
   useEffect(() => {
     db.collection("restaurants")
       .get()
       .then((snap) => {
-        setTotalRestaurants(snap.size); //Obtenemos todos los locales
+        setTotalRestaurants(snap.size);
       });
 
     const resultRestaurants = [];
@@ -47,6 +50,33 @@ export default function Restaurants(props) {
         setRestaurants(resultRestaurants);
       });
   }, []);
+
+  //Se ocupa de traer nuevos restaurantes y guardarlos en el estado
+  const handleLoadMore = () => {
+    const resultRestaurants = [];
+    restaurant.length < totalRestaurants && setIsLoading(true);
+
+    db.collection("restaurants")
+      .orderBy("createAt", "desc")
+      .startAfter(startRestaurants.data().createAt)
+      .limit(limitRestaurants)
+      .get()
+      .then((response) => {
+        if (response.docs.length > 0) {
+          setStartRestaurants(response.docs[response.docs.length - 1]);
+        } else {
+          setIsLoading(false);
+        }
+
+        response.forEach((doc) => {
+          const restaurant = doc.data();
+          restaurant.id = doc.id;
+          resultRestaurants.push({ restaurant });
+        });
+
+        setRestaurants([...restaurant, ...resultRestaurants]);
+      });
+  };
 
   return (
     <View style={styles.viewBody}>

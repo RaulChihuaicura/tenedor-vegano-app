@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     marginRight: 15,
   },
   imageRestaurant: {
-    width: 120,
+    width: 80,
     height: 80,
   },
   restaurantName: {
