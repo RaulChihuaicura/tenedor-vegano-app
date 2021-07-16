@@ -1,19 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Avatar, Rating } from "react-native-elements";
 
 import { firebaseApp } from "../../utils/firebase";
 import firebase from "firebase/app";
+import "firebase/firestore";
 
 const db = firebase.firestore(firebaseApp);
 
 export default function ListReview(props) {
-  const { navigation, idRestaurant, setRating } = props;
+  const { navigation, idRestaurant } = props;
   const [userLogged, setUserLogged] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  console.log(reviews);
 
   firebaseApp.auth().onAuthStateChanged((user) => {
     user ? setUserLogged(true) : setUserLogged(false);
   });
+
+  //Obtienes las reviews de firestore
+  useEffect(() => {
+    const resultReview = [];
+    db.collection("reviews")
+      .where("idRestaurant", "==", idRestaurant)
+      .get()
+      .then((response) => {
+        response.forEach((doc) => {
+          const data = doc.data();
+          data.id = doc.id;
+          resultReview.push(data);
+        });
+        setReviews(resultReview);
+      });
+  }, []);
 
   return (
     <View>
