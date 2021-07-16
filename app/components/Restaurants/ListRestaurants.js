@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   },
   viewRestaurant: {
     flexDirection: "row",
-    margin: 2,
+    margin: 1,
     padding: 4,
     borderRadius: 5,
     backgroundColor: "#C2A0E8",
