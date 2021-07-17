@@ -19,7 +19,8 @@ import "firebase/firestore";
 
 const db = firebase.firestore(firebaseApp);
 
-export default function Favorites() {
+export default function Favorites(props) {
+  const { navigation } = props;
   const [restaurants, setRestaurants] = useState(null);
   const [userlogged, setUserlogged] = useState(false);
 
@@ -64,6 +65,10 @@ export default function Favorites() {
     return Promise.all(arrayRestaurants);
   };
 
+  if (!userlogged) {
+    return <UserNoLogged navigation={navigation} />;
+  }
+
   if (!restaurants) {
     return <Loading isVisible={true} text="Cargando locales" />;
   } else if (size(restaurants) === 0) {
@@ -96,6 +101,44 @@ function NotFoundRestaurants() {
       <Text style={{ fontSize: 20, fontWeight: "bold", color: "#C2A0E8" }}>
         No tienes locales favoritos en tu lista
       </Text>
+    </View>
+  );
+}
+
+function UserNoLogged(props) {
+  const { navigation } = props;
+
+  return (
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#DED7FA",
+      }}
+    >
+      <Icon
+        type="material-community"
+        name="alert-outline"
+        size={50}
+        color="#C2A0E8"
+      />
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "bold",
+          textAlign: "center",
+          color: "#C2A0E8",
+        }}
+      >
+        Necesitas estar logeado para ver esta sección
+      </Text>
+      <Button
+        title="Ir al login"
+        containerStyle={{ marginTop: 20, width: "80%" }}
+        buttonStyle={{ backgroundColor: "#C2A0E8" }}
+        onPress={() => navigation.navigate("login")}
+      />
     </View>
   );
 }
