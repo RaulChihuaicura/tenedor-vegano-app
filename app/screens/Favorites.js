@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Image, Icon, Button, ListItem } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-easy-toast";
 import Loading from "../components/Loading";
 
 import { firebaseApp } from "../utils/firebase";
@@ -22,6 +23,9 @@ export default function Favorites(props) {
   const { navigation } = props;
   const [restaurants, setRestaurants] = useState(null);
   const [userlogged, setUserlogged] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [reloadData, setReloadData] = useState(false);
+  const toastRef = useRef();
 
   console.log(restaurants);
 
@@ -52,7 +56,8 @@ export default function Favorites(props) {
             });
           });
       }
-    }, [userlogged])
+      setReloadData(false);
+    }, [userlogged, reloadData])
   );
 
   const getDataRestaurant = (idRestaurantsArray) => {
@@ -79,7 +84,14 @@ export default function Favorites(props) {
       {restaurants ? (
         <FlatList
           data={restaurants}
-          renderItem={(restaurant) => <Restaurant restaurant={restaurant} />}
+          renderItem={(restaurant) => (
+            <Restaurant
+              restaurant={restaurant}
+              setIsLoading={setIsLoading}
+              toastRef={toastRef}
+              setReloadData={setReloadData}
+            />
+          )}
           keyExtractor={(item, index) => index.toString()}
         />
       ) : (
@@ -88,6 +100,8 @@ export default function Favorites(props) {
           <Text style={{ textAlign: "center" }}>Cagando locales</Text>
         </View>
       )}
+      <Toast ref={toastRef} position="center" opacity={0.9} />
+      <Loading text="Eliminando local" isVisible={isLoading} />
     </View>
   );
 }
@@ -154,8 +168,52 @@ function UserNoLogged(props) {
 }
 
 function Restaurant(props) {
-  const { restaurant } = props;
-  const { name, images } = restaurant.item;
+  const { restaurant, setIsLoading, toastRef, setReloadData } = props;
+  const { id, name, images } = restaurant.item;
+
+  const confirmRemoveFavorite = () => {
+    Alert.alert(
+      "Eliminar Local de favoritos",
+      "¿Estas seguro de eliminar le local de favoritos?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Eliminar",
+          onPress: removeFavorite,
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const removeFavorite = () => {
+    setIsLoading(true);
+    db.collection("favorites")
+      .where("idRestaurant", "==", id)
+      .where("idUser", "==", firebase.auth().currentUser.uid)
+      .get()
+      .then((response) => {
+        response.forEach((doc) => {
+          const idFavorite = doc.id;
+          db.collection("favorites")
+            .doc(idFavorite)
+            .delete()
+            .then(() => {
+              setIsLoading(false);
+              setReloadData(true);
+              toastRef.current.show("Local eliminado correctamente");
+            })
+            .catch(() => {
+              setIsLoading(false);
+              toastRef.current.show("Error al eliminar el local");
+            });
+        });
+      });
+  };
+
   return (
     <View style={styles.restaurant}>
       <TouchableOpacity onPress={() => console.log("IR")}>
@@ -176,7 +234,7 @@ function Restaurant(props) {
             name="heart"
             color="#f00"
             containerStyle={styles.favorite}
-            onPress={() => console.log("Remove")}
+            onPress={confirmRemoveFavorite}
             underlayColor="transparent"
           />
         </View>
@@ -211,7 +269,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     marginTop: -30,
-    backgroundColor: "#fff",
+    backgroundColor: "#C2A0E8",
   },
   name: {
     fontWeight: "bold",
@@ -220,7 +278,7 @@ const styles = StyleSheet.create({
   },
   favorite: {
     marginTop: -35,
-    backgroundColor: "#fff",
+    backgroundColor: "#C2A0E8",
     padding: 15,
     borderRadius: 100,
   },
