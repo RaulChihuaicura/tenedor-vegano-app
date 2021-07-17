@@ -8,10 +8,9 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Image, Icon, Button } from "react-native-elements";
+import { Image, Icon, Button, ListItem } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
 import Loading from "../components/Loading";
-import { size } from "lodash";
 
 import { firebaseApp } from "../utils/firebase";
 import firebase from "firebase";
@@ -71,13 +70,24 @@ export default function Favorites(props) {
 
   if (!restaurants) {
     return <Loading isVisible={true} text="Cargando locales" />;
-  } else if (size(restaurants) === 0) {
+  } else if (restaurants?.length === 0) {
     return <NotFoundRestaurants />;
   }
 
   return (
-    <View style={{ backgroundColor: "#DED7FA" }}>
-      <Text>Favorites...</Text>
+    <View style={styles.viewBody}>
+      {restaurants ? (
+        <FlatList
+          data={restaurants}
+          renderItem={(restaurant) => <Restaurant restaurant={restaurant} />}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      ) : (
+        <View style={styles.loaderRestaurants}>
+          <ActivityIndicator size="large" />
+          <Text style={{ textAlign: "center" }}>Cagando locales</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -142,3 +152,24 @@ function UserNoLogged(props) {
     </View>
   );
 }
+
+function Restaurant(props) {
+  const { restaurant } = props;
+  const { name } = restaurant.item;
+  return (
+    <View>
+      <Text>{name}</Text>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  viewBody: {
+    flex: 1,
+    backgroundColor: "#DED7FA",
+  },
+  loaderRestaurants: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+});
