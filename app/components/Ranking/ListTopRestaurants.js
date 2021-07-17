@@ -24,13 +24,79 @@ export default function ListTopRestaurants(props) {
 
 function Restaurant(props) {
   const { restaurant, navigation } = props;
-  const { name, rating } = restaurant.item;
+  const { name, rating, images, description } = restaurant.item;
+  const [iconColor, setIconColor] = useState("#000");
+
+  useEffect(() => {
+    if (restaurant.index === 0) {
+      setIconColor("#efb819");
+    } else if (restaurant.index === 1) {
+      setIconColor("#e3e4e5");
+    } else if (restaurant.index === 2) {
+      setIconColor("#cd7f32");
+    }
+  }, []);
+
   return (
-    <View>
-      <Text>{name}</Text>
-      <Text>{rating}</Text>
-    </View>
+    <TouchableOpacity style={styles.body}>
+      <Card containerStyle={styles.containerCard}>
+        <Icon
+          type="material-community"
+          name="chess-queen"
+          color={iconColor}
+          size={40}
+          containerStyle={styles.containerIcon}
+        />
+        <Image
+          style={styles.restaurantImage}
+          resizeMode="cover"
+          source={
+            images[0]
+              ? { uri: images[0] }
+              : require("../../../assets/img/no-image.png")
+          }
+        />
+        <View style={styles.titleRating}>
+          <Text style={styles.title}>{name}</Text>
+          <Rating imageSize={20} startingValue={rating} readonly />
+        </View>
+        <Text style={styles.description}>{description}</Text>
+      </Card>
+    </TouchableOpacity>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  body: {
+    backgroundColor: "#DED7FA",
+  },
+  containerCard: {
+    marginBottom: 30,
+    borderWidth: 0,
+  },
+  containerIcon: {
+    position: "absolute",
+    top: -30,
+    left: -30,
+    zIndex: 1,
+  },
+  restaurantImage: {
+    width: "100%",
+    height: 200,
+  },
+  titleRating: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  description: {
+    color: "grey",
+    marginTop: 0,
+    textAlign: "justify",
+  },
+});
