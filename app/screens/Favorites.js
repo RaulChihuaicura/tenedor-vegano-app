@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { Image, Icon, Button } from "react-native-elements";
 import { useFocusEffect } from "@react-navigation/native";
+import Loading from "../components/Loading";
+import { size } from "lodash";
 
 import { firebaseApp } from "../utils/firebase";
 import firebase from "firebase";
@@ -39,7 +41,7 @@ export default function Favorites() {
             response.forEach((doc) => {
               idRestaurantsArray.push(doc.data().idRestaurant);
             });
-            getDataRrestaurant(idRestaurantsArray).then((response) => {
+            getDataRestaurant(idRestaurantsArray).then((response) => {
               const restaurants = [];
               response.forEach((doc) => {
                 const restaurant = doc.data();
@@ -53,7 +55,7 @@ export default function Favorites() {
     }, [userlogged])
   );
 
-  const getDataRrestaurant = (idRestaurantsArray) => {
+  const getDataRestaurant = (idRestaurantsArray) => {
     const arrayRestaurants = [];
     idRestaurantsArray.forEach((idRestaurant) => {
       const result = db.collection("restaurants").doc(idRestaurant).get();
@@ -62,9 +64,38 @@ export default function Favorites() {
     return Promise.all(arrayRestaurants);
   };
 
+  if (!restaurants) {
+    return <Loading isVisible={true} text="Cargando locales" />;
+  } else if (size(restaurants) === 0) {
+    return <NotFoundRestaurants />;
+  }
+
   return (
-    <View>
+    <View style={{ backgroundColor: "#DED7FA" }}>
       <Text>Favorites...</Text>
+    </View>
+  );
+}
+
+function NotFoundRestaurants() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#DED7FA",
+      }}
+    >
+      <Icon
+        type="material-community"
+        name="alert-outline"
+        size={50}
+        color="#C2A0E8"
+      />
+      <Text style={{ fontSize: 20, fontWeight: "bold", color: "#C2A0E8" }}>
+        No tienes locales favoritos en tu lista
+      </Text>
     </View>
   );
 }
