@@ -24,7 +24,7 @@ export default function ListTopRestaurants(props) {
 
 function Restaurant(props) {
   const { restaurant, navigation } = props;
-  const { name, rating, images, description } = restaurant.item;
+  const { id, name, rating, images, description } = restaurant.item;
   const [iconColor, setIconColor] = useState("#000");
 
   useEffect(() => {
@@ -38,7 +38,15 @@ function Restaurant(props) {
   }, []);
 
   return (
-    <TouchableOpacity style={styles.body}>
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("restaurants", {
+          screen: "restaurant",
+          params: { id },
+        })
+      }
+      style={styles.body}
+    >
       <Card containerStyle={styles.containerCard}>
         <Icon
           type="material-community"
