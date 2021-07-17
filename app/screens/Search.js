@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, FlatList, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  Image,
+  ScrollView,
+} from "react-native";
 import { SearchBar, ListItem, Icon } from "react-native-elements";
 import { FireSQL } from "firesql";
 import firebase from "firebase/app";
@@ -23,7 +30,7 @@ export default function Search(props) {
   }, [search]);
 
   return (
-    <View style={styles.viewBody}>
+    <ScrollView style={styles.scrollViewBody}>
       <SearchBar
         placeholder="Busca un local vegano..."
         onChangeText={(e) => setSearch(e)}
@@ -34,10 +41,16 @@ export default function Search(props) {
         <NoFoundRestaurants />
       ) : (
         <View>
-          <Text>Resultado...</Text>
+          <FlatList
+            data={restaurants}
+            renderItem={(restaurant) => (
+              <Restaurant restaurant={restaurant} navigation={navigation} />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -53,11 +66,39 @@ function NoFoundRestaurants() {
   );
 }
 
+function Restaurant(props) {
+  const { restaurant, navigation } = props;
+  const { id, name, images } = restaurant.item;
+
+  return (
+    <ListItem
+      title={name}
+      leftAvatar={{
+        source: images[0]
+          ? { uri: images[0] }
+          : require("../../assets/img/no-image.png"),
+      }}
+      rightIcon={<Icon type="material-community" name="chevron-right" />}
+      onPress={() =>
+        navigation.navigate("restaurants", {
+          screen: "restaurant",
+          params: { id, name },
+        })
+      }
+      containerStyle={styles.containerListItem}
+    />
+  );
+}
+
 const styles = StyleSheet.create({
-  viewBody: {
+  scrollViewBody: {
     backgroundColor: "#DED7FA",
   },
   searchBar: {
     marginBottom: 20,
+  },
+  containerListItem: {
+    backgroundColor: "#C2A0E8",
+    marginBottom: 1,
   },
 });
